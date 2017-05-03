@@ -1,0 +1,86 @@
+#! /usr/bin/env bash
+
+#readonly TIME_FORMAT="%F %R:%M:%S"
+
+log() {
+    local LEVEL=$1
+    shift
+    echo "[$LEVEL] $(date +%F\ %R:%M:%S) - $*"
+}
+
+info() {
+    log "INFO" $*
+}
+
+warn() {
+    log "WARN" $*
+}
+
+error() {
+    log "ERROR" $*
+}
+
+copy_files() {
+    info "Copy output files..."
+    cp sbt-stdout.out sbt-stdout.old.out
+    cp sbt-cache.out sbt-cache.old.out
+}
+
+find ~/.ivy2/cache -name *.part -exec ls -lh {} \; > sbt-cache.out
+$* 2>&1 | tee sbt-stdout.out &
+PID_SBT=$(ps a | grep "$*" | grep -v grep | cut -d' ' -f2)
+info "$* (PID = $PID_SBT)"
+trap "kill -9 $PID_SBT" SIGINT EXIT
+
+# NOTICE: we use 1 to represent true here
+FIRST=1
+COUNT=1
+CACHE_CHANGED=0
+
+while true; do
+
+    if [ ! $FIRST -eq 0 ]; then
+        info "Wait 30 seconds before start monitoring..."
+        sleep 30
+        cp sbt-stdout.out sbt-stdout.old.out
+        cp sbt-cache.out sbt-cache.old.out
+        FIRST=0
+    fi
+
+    #info "Wait 60 seconds..."
+    sleep 1
+
+    diff -u sbt-cache.out sbt-cache.old.out 2>&1 > /dev/null
+    RET=$?
+    if [ ! $RET -eq 0 ]; then
+        echo "SBT cache changed"
+        CACHE_CHANGED=1
+    fi
+
+    let "REM=$COUNT % 60"
+    if [ $REM -eq 0 ]; then
+        info "Checking"
+        diff -u sbt-stdout.out sbt-stdout.old.out 2>&1 > /dev/null
+        local RET=$?
+        #diff -u sbt-cache.out sbt-cache.old.out 2>&1 > /dev/null
+        #local R2=$?
+
+        if [ $RET -eq 0 ] && [ $CACHE_CHANGED -eq 0 ]; then
+            warn "No change. Attempt to restart $*"
+            kill -9 $PID_SBT
+            info "Process $PID_SBT killed. Wait 10 seconds before restart..."
+            rm sbt-stdout.out sbt-stdout.old.out sbt-cache.out sbt-cache.old.out
+            sleep 10
+            $* 2>&1 | tee sbt-stdout.out & PID_SBT=$!
+            info "$* (pid $PID_SBT)"
+            trap "kill -9 $PID_SBT" SIGINT EXIT
+        else
+            cp sbt-stdout.out sbt-stdout.old.out
+        fi
+
+        info "Wait 60 seconds..."
+    fi
+
+done
+
+wait

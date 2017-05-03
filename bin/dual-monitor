@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+M1=`xrandr -q|grep LVDS1|cut -d\  -f1`
+M2=`xrandr -q|grep HDMI1|cut -d\  -f1`
+xrandr --output $M1 --primary --auto --pos 0x0 --output $M2 --auto --same-as $M1
+
+#xrandr --output $M1 --primary --auto --pos 0x0 --output $M2 --auto --same-as $M1
+#xrandr --output $M1 --auto --pos 0x0 --output $M2 --auto --above $M1

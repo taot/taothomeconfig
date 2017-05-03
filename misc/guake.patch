@@ -1,0 +1,65 @@
+From a369904bb1973604e0994d77530871a23c5bef8c Mon Sep 17 00:00:00 2001
+From: Terry Tao <tao.tao@i-md.com>
+Date: Fri, 3 Aug 2012 14:42:40 +0800
+Subject: [PATCH] Apply my customization patch to updated guake.
+
+---
+ bin/guake | 28 ++++++++++++++++++++++++++--
+ 1 file changed, 26 insertions(+), 2 deletions(-)
+
+diff --git a/bin/guake b/bin/guake
+index 836a2b1..7aabbda 100755
+--- a/bin/guake
++++ b/bin/guake
+@@ -54,6 +54,9 @@ from guake.globals import NAME, VERSION, LOCALE_DIR, KEY, GCONF_PATH, \
+     TERMINAL_MATCH_EXPRS, TERMINAL_MATCH_TAGS, \
+     ALIGN_LEFT, ALIGN_RIGHT, ALIGN_CENTER
+ 
++# Added by Terry Tao
++import re
++
+ popup_works = True
+ if not pynotify.init('Guake!') or pynotify.get_server_info() == None :
+     popup_works = False
+@@ -1014,7 +1017,28 @@ class Guake(SimpleGladeApp):
+         if not use_them:
+             return
+         page = self.notebook.page_num(box)
+-        self.tabs.get_children()[page].set_label(vte.get_window_title())
++        self.tabs.get_children()[page].set_label(self.get_customized_window_title(vte))
++
++    # Make tab title shorter, added by Terry Tao
++    def get_customized_window_title(self, vte):
++        title = vte.get_window_title()
++        if title == None:
++            return None
++        p1 = re.compile('(.*)@(.*):(.*)')
++        m1 = p1.match(title)
++        user = m1.group(1)
++        pwd = m1.group(3)
++        p2 = re.compile('.*/(.*)$')
++        m2 = p2.match(pwd)
++        if m2 != None:
++            pwd = m2.group(1)
++        return user + ":" + pwd
++
++    def get_spaces(self, n):
++        spaces = ""
++        for i in range(n):
++            spaces += " "
++        return spaces
+ 
+     def on_rename_activate(self, *args):
+         """Shows a dialog to rename the current tab.
+@@ -1224,7 +1248,7 @@ class Guake(SimpleGladeApp):
+         self.pid_list.append(pid)
+ 
+         # Adding a new radio button to the tabbar
+-        label = box.terminal.get_window_title() or _("Terminal")
++        label = self.get_customized_window_title(box.terminal) or _("Terminal")
+         tabs = self.tabs.get_children()
+         parent = tabs and tabs[0] or None
+ 
+-- 
+1.7.11.4
+

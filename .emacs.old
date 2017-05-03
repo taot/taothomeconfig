@@ -1,0 +1,316 @@
+;; Show messages when loading emacs
+;;(setq message-log-max t)
+
+;;
+;; General settings
+;;
+(setq my-indent-size 4)
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(c-basic-offset my-indent-size)
+ '(column-number-mode t)
+ '(ecb-layout-name "left5")
+ '(ecb-options-version "2.40")
+ '(ecb-primary-secondary-mouse-buttons (quote mouse-1--C-mouse-1))
+ '(ecb-tip-of-the-day nil)
+ '(indent-tabs-mode nil)
+ '(inhibit-startup-screen t)
+ '(menu-bar-mode nil)
+ '(scroll-bar-mode (quote right))
+ '(scroll-step 1)
+ '(sgml-basic-offset my-indent-size)
+ '(sh-basic-offset my-indent-size)
+ '(show-paren-mode t)
+ '(tab-width my-indent-size)
+ '(vc-follow-symlinks nil)
+ '(vc-handled-backends nil))
+
+(when window-system
+  (set-default-font "11")
+  (set-background-color "gray10")
+  (set-foreground-color "gray90")
+  (setq mouse-wheel-scroll-amount '(2 ((shift) . 1) ((control) . nil)))
+  (setq mouse-wheel-progressive-speed nil))
+
+(require 'package)
+(add-to-list 'package-archives
+             '("melpa-stable" . "http://melpa-stable.milkbox.net/packages/") t)
+
+(add-to-list 'load-path "~/.emacs.d/site-lisp")
+
+(defalias 'yes-or-no-p 'y-or-n-p)
+
+(require 'ibuf-ext)
+(add-to-list 'ibuffer-never-show-predicates "^\\*")
+
+(require 'ido)
+(ido-mode t)
+
+;; highlight-symbol
+(require 'highlight-symbol)
+(global-set-key (kbd "C-x h") 'highlight-symbol-at-point)
+(global-set-key (kbd "C-x j") 'highlight-symbol-remove-all)
+
+;; remove trailing whitespaces before saving
+(add-hook 'before-save-hook '(lambda ()
+                               (my-delete-trailing-whitespace)))
+
+
+;;
+;; Define functions and customize key map
+;;
+(global-set-key (kbd "C-x l") 'goto-line)
+(global-set-key (kbd "C-x C-l") 'count-lines-page)
+(global-set-key (kbd "C-a") 'my-beginning-of-line)
+(global-set-key (kbd "C-x p") 'previous-multiframe-window)
+(global-set-key (kbd "C-x f") 'find-file-at-point)
+(global-set-key (kbd "C-x C-b") 'ibuffer)
+
+;; customize beginning of line
+(defun my-beginning-of-line ()
+  "Customized beginning-of-line for scala-mode.
+Move point to the beginning of text. If invoked again, move point
+to beginning of line."
+  (interactive)
+  (setq my-old-column (current-column))
+  (beginning-of-line-text)
+  (if (eq (current-column) my-old-column)
+      (beginning-of-line)
+    (beginning-of-line-text)))
+
+;; customize delete trailing whitespace
+(defun my-delete-trailing-whitespace ()
+  "Customized delete-trailing-whitespace."
+  (interactive)
+  (let ((column (current-column)))
+    (delete-trailing-whitespace)
+    (move-to-column column t)))
+
+;; format
+(defun fmt (&optional start end)
+  (interactive (progn
+                 (barf-if-buffer-read-only)
+                 (if (use-region-p)
+                     (list (region-beginning) (region-end))
+                   (list nil nil))))
+  (save-excursion
+    (let ((start (or start (point-min)))
+          (end (or end (point-max))))
+      (format-between-points start end))))
+
+;; helper function for format
+(defun format-between-points (start end)
+  (untabify start end)
+  (indent-region start end)
+  (delete-trailing-whitespace start end))     ; uses literal space and tab char
+
+;; recompile emacs site-lisp files
+(defun byte-compile-site-lisp ()
+  "Byte compile the files in site-lisp"
+  (interactive)
+  (byte-recompile-directory "~/.emacs.d/site-lisp" 0 nil))
+
+;; insert current time
+(defun insert-current-datetime ()
+  "Insert the current time"
+  (interactive "*")
+  ;;(insert (format-time-string "%Y/%m/%d %H:%M:%S" (current-time))))
+  (insert (format-time-string "%Y-%m-%d %H:%M:%S" (current-time))))
+
+
+;;
+;; Toggle window split
+;;
+(defun toggle-window-split ()
+  (interactive)
+  (if (= (count-windows) 2)
+      (let* ((this-win-buffer (window-buffer))
+                  (next-win-buffer (window-buffer (next-window)))
+                       (this-win-edges (window-edges (selected-window)))
+                            (next-win-edges (window-edges (next-window)))
+                                 (this-win-2nd (not (and (<= (car this-win-edges)
+                                                              (car next-win-edges))
+                                                              (<= (cadr this-win-edges)
+                                                                   (cadr next-win-edges)))))
+                                      (splitter
+                                             (if (= (car this-win-edges)
+                                                         (car (window-edges (next-window))))
+                                                   'split-window-horizontally
+                                               'split-window-vertically)))
+        (delete-other-windows)
+        (let ((first-win (selected-window)))
+            (funcall splitter)
+              (if this-win-2nd (other-window 1))
+                (set-window-buffer (selected-window) this-win-buffer)
+                  (set-window-buffer (next-window) next-win-buffer)
+                    (select-window first-win)
+                      (if this-win-2nd (other-window 1))))))
+
+(define-key ctl-x-4-map "t" 'toggle-window-split)
+
+
+;;
+;; Load and customize modes
+;;
+
+;; c-mode
+(add-hook 'c-mode-hook '(lambda ()
+                          (local-set-key (kbd "RET") 'newline-and-indent)))
+
+;; coffee-script mode
+(require 'coffee-mode)
+(add-hook 'css-mode-hook '(lambda ()
+                            (setq css-indent-offset my-indent-size)
+                            (local-set-key (kbd "RET") 'newline-and-indent)))
+
+;; dired-mode
+(require 'dired-x)
+(put 'dired-find-alternate-file 'disabled nil)
+(add-hook 'dired-mode-hook ; re-map key bindings. Old onese were dired-advertised-find file and dired-up-directory
+          (lambda ()
+            (dired-omit-mode 1)
+            (define-key dired-mode-map (kbd "RET") 'dired-find-alternate-file)
+            (define-key dired-mode-map (kbd "^")
+              (lambda () (interactive) (find-alternate-file "..")))))
+
+;; erlang-mode
+;;(require 'erlang-start)
+
+;; ESS-mode
+(setq ess-location "~/src-repo/ESS/lisp/ess-site")
+(if (file-exists-p ess-location)
+    (load ess-location))
+
+;; evil-mode
+(add-to-list 'load-path "~/.emacs.d/site-lisp/evil")
+(require 'evil)
+(defun vim ()
+  (interactive)
+  (evil-mode (if evil-mode 0 1)))
+
+;; haskell-mode
+(add-to-list 'load-path "~/.emacs.d/site-lisp/haskell-mode")
+(require 'haskell-mode-autoloads)
+(add-to-list 'Info-default-directory-list "~/.emacs.d/site-lisp/haskell-mode")
+(add-hook 'haskell-mode-hook 'haskell-indent-mode)
+;;(add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
+;;(add-hook 'haskell-mode-hook 'interactive-haskell-mode)
+;;(autoload 'ghc-init "ghc" nil t)
+;;(autoload 'ghc-debug "ghc" nil t)
+;;(add-hook 'haskell-mode-hook (lambda () (ghc-init)))
+
+;; html-mode
+(add-hook 'html-mode-hook '(lambda ()
+                             (local-set-key (kbd "RET") 'newline-and-indent)))
+
+;; jade-mode
+(require 'jade-mode)
+(add-to-list 'auto-mode-alist '("\\.jade$" . jade-mode))
+
+;; java-mode
+(add-hook 'java-mode-hook '(lambda ()
+                             (c-set-offset 'arglist-intro '+)
+                             (local-set-key (kbd "RET") 'newline-and-indent)))
+
+;; js-mode
+(add-hook 'js-mode-hook '(lambda ()
+                           (setq js-indent-level my-indent-size)
+                           (local-set-key (kbd "RET") 'newline-and-indent)
+                           (local-set-key (kbd "}") 'js-electric-brace)))
+
+(defun js-electric-brace ()
+  (interactive)
+  (let ((on-empty-line-p (save-excursion
+                           (beginning-of-line)
+                           (looking-at "^\\s *$"))))
+    (when on-empty-line-p
+      (insert "}")
+      (js-indent-line)
+      (delete-backward-char 1))
+    (call-interactively 'self-insert-command)))
+
+;; ECB
+(add-to-list 'load-path "~/.emacs.d/site-lisp/ecb")
+(setq stack-trace-on-error t)
+(when window-system (setq ecb-auto-activate t))
+(require 'ecb)
+(require 'ecb-autoloads)
+
+;; emacs lisp mode
+(add-hook 'emacs-lisp-mode-hook '(lambda ()
+                                   (local-set-key (kbd "RET") 'newline-and-indent)))
+
+;; less mode
+(require 'less-mode)
+(add-to-list 'auto-mode-alist '("\\.less$" . less-mode))
+(setq less-compile-at-save nil)
+
+;; octave-mode
+(setq auto-mode-alist (cons '("\\.m$" . octave-mode) auto-mode-alist))
+(add-hook 'octave-mode-hook '(lambda ()
+                               (local-set-key (kbd "RET") 'newline-and-indent)))
+
+
+;; org-mode
+(add-hook 'org-mode-hook '(lambda ()
+                            ;;(setq org-hide-leading-stars t)
+                            (setq org-log-done t)
+                            (org-indent-mode t)))
+
+;; perl-mode
+(fset 'perl-mode 'cperl-mode)
+(setq cperl-invalid-face (quote off))
+
+;; pig-latin mode
+;;(require 'piglatin-mode)
+
+;; puppet-mode
+(require 'puppet-mode)
+(add-to-list 'auto-mode-alist '("\\.pp\\'" . puppet-mode))
+
+;; scala-mode
+(add-to-list 'load-path "~/.emacs.d/site-lisp/scala-mode2")
+(require 'scala-mode2)
+(add-hook 'scala-mode-hook '(lambda ()
+                              (local-set-key (kbd "RET") 'newline-and-indent)))
+
+;; ruby-mode
+(add-hook 'ruby-mode-hook '(lambda ()
+                             (local-set-key (kbd "RET") 'newline-and-indent)))
+(add-to-list 'auto-mode-alist '("/[Rr]akefile$" . ruby-mode))
+
+;; sh-mode
+(add-hook 'sh-mode-hook '(lambda ()
+                           (local-set-key (kbd "RET") 'newline-and-indent)))
+
+;; qml-mode
+(autoload 'qml-mode "qml-mode")
+(add-to-list 'auto-mode-alist '("\\.qml$" . qml-mode))
+
+;; use sgml-mode for xml files
+(add-to-list 'auto-mode-alist '("\\.xml$" . sgml-mode))
+
+;;
+;; Setup auto-complete
+;;
+(add-to-list 'load-path "~/.emacs.d/site-lisp/auto-complete")
+(require 'auto-complete-config)
+(add-to-list 'ac-dictionary-directories "~/.emacs.d/site-lisp/auto-complete/ac-dict")
+(ac-config-default)
+
+
+;;
+;; Load custom config
+;;
+(setq local-custom-file "~/.emacs-custom.el")
+(if (file-exists-p local-custom-file)
+    (load local-custom-file))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )

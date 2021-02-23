@@ -1,6 +1,6 @@
 #/usr/bin/env bash
 
-FILE_LIST=(.bashrc_include .emacs .gitconfig .makepkg.conf .Rprofile .sqliterc .tmux.conf .vim .vimrc .Xresources bin/sbt bin/sbt-launch.jar bin/sbt-monitor bin/start-android-emulator.sh)
+FILE_LIST=(.bashrc_include .emacs .gitconfig .makepkg.conf .tmux.conf .vim .vimrc .Xresources bin/sbt bin/sbt-launch.jar bin/sbt-monitor bin/start-android-emulator.sh .config/fcitx/rime/default.custom.yaml .config/fcitx/rime/luna_pinyin.custom.yaml)
 
 #FILE_LIST=(bin/sbt bin/sbt-launch.jar)
 

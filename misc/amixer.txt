@@ -1,4 +1,0 @@
-[Adjust volume with amixer]
-
-amixer set Master 5%+
-amixer set Master 5%-

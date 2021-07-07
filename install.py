@@ -31,7 +31,10 @@ def find(cwd):
         raise Exception("failed to find config files")
     return stdout.decode().split()
 
-def link(src, dst):
+def link(src, dst, status):
+    if status == LinkStatus.NOT_LINK:
+        # if file exists, backup first
+        run1(["cp", dst, dst + ".bak"])
     retcode, stdout, stderr = run1(["ln", "-sf", src, dst])
     if retcode != 0:
         raise Exception("failed to link")
@@ -101,15 +104,15 @@ if __name__ == "__main__":
             else:
                 src_path = get_src_path(filename)
                 dst_path = get_dst_path(filename)
-                action_list.append((src_path, dst_path))
+                action_list.append((src_path, dst_path, status))
                 msg_list.append(src_path + " -> " + dst_path + link_status_to_desc(status))
 
         msg = "Are you sure to create the following links?\n\n" + "\n".join(msg_list)
         ret = dialog_yesno(msg, 20, 80)
         if ret:
-            for src, dst in action_list:
-                link(src, dst)
+            for src, dst, status in action_list:
+                link(src, dst, status)
 
     clear()
-    for src, dst in action_list:
+    for src, dst, status in action_list:
         print(src + " -> " + dst)

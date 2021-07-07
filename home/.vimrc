@@ -1,7 +1,5 @@
 " 文件类型侦测
 filetype on
-" 根据文件类加载对应插件
-filetype plugin on
 
 ":set fileformat=unix
 " 打开语法加亮
@@ -14,11 +12,6 @@ filetype plugin on
 set nocompatible
 " vim 自身命令行模式智能补全
 set wildmenu
-
-" 将 pathogen 置于独立目录中
-runtime bundle/pathogen/autoload/pathogen.vim
-" 运行pathogen
-execute pathogen#infect()
 
 " 显示状态栏
 set laststatus=2

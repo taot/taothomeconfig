@@ -1,6 +1,5 @@
 " 文件类型侦测
 filetype on
-
 ":set fileformat=unix
 " 打开语法加亮
 :syn on
@@ -12,7 +11,6 @@ filetype on
 set nocompatible
 " vim 自身命令行模式智能补全
 set wildmenu
-
 " 显示状态栏
 set laststatus=2
 " 显示光标位置

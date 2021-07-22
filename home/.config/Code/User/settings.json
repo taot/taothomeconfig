@@ -1,0 +1,39 @@
+{
+    "workbench.startupEditor": "none",
+    "workbench.editor.untitled.hint": "hidden",
+    "git.decorations.enabled": false,
+    "git.autoRepositoryDetection": false,
+    "git.enabled": false,
+    "workbench.list.openMode": "doubleClick",
+    "[yaml]": {
+        
+
+        "editor.insertSpaces": true,
+        "editor.tabSize": 4,
+        "editor.autoIndent": "advanced"
+    },
+    "workbench.editor.decorations.badges": false,
+    "explorer.decorations.badges": false,
+    "explorer.decorations.colors": false,
+    "workbench.editor.decorations.colors": false,
+    "editor.detectIndentation": false,
+    "debug.javascript.codelens.npmScripts": "never",
+    "workbench.tree.indent": 16,
+    "js/ts.implicitProjectConfig.checkJs": true,
+    "files.insertFinalNewline": true,
+    "explorer.autoReveal": false,
+    "search.useIgnoreFiles": false,
+    "explorer.compactFolders": false,
+    "todo-tree.tree.showScanModeButton": false,
+    "todo-tree.general.tags": [
+        "BUG",
+        "HACK",
+        "FIXME",
+        "TODO",
+        "XXX",
+        "[ ]",
+        "[x]"
+    ],
+    "todo-tree.regex.regex": "(//|#|<!--|;|/\\*|^|^\\s*(-|\\d+.))\\s*($TAGS)",
+    "php.validate.executablePath": "/usr/bin/php7"
+}

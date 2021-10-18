@@ -14,6 +14,7 @@ setproxy() {
 }
 
 # aliases
+alias diff='diff -u'
 alias dirs='dirs -v'
 alias emacs='emacs -nw'
 alias jobs='jobs -l'

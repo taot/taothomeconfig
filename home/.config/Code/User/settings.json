@@ -35,5 +35,6 @@
         "[x]"
     ],
     "todo-tree.regex.regex": "(//|#|<!--|;|/\\*|^|^\\s*(-|\\d+.))\\s*($TAGS)",
-    "php.validate.executablePath": "/usr/bin/php7"
+    "php.validate.executablePath": "/usr/bin/php7",
+    "editor.fontSize": 15
 }

@@ -14,13 +14,13 @@
  '(column-number-mode t)
  '(ecb-layout-name "left5")
  '(ecb-options-version "2.40")
- '(ecb-primary-secondary-mouse-buttons (quote mouse-1--C-mouse-1))
+ '(ecb-primary-secondary-mouse-buttons 'mouse-1--C-mouse-1)
  '(ecb-tip-of-the-day nil)
  '(indent-tabs-mode nil)
  '(inhibit-startup-screen t)
  '(menu-bar-mode nil)
- '(package-selected-packages (quote (haskell-mode)))
- '(scroll-bar-mode (quote right))
+ '(package-selected-packages '(company-ghci lsp-haskell lsp-mode haskell-mode))
+ '(scroll-bar-mode 'right)
  '(scroll-step 1)
  '(sgml-basic-offset my-indent-size)
  '(sh-basic-offset my-indent-size)
@@ -30,7 +30,7 @@
  '(vc-handled-backends nil))
 
 (when window-system
-  (set-default-font "11")
+  ;(set-default-font "11")
   (set-background-color "gray10")
   (set-foreground-color "gray90")
   (setq mouse-wheel-scroll-amount '(2 ((shift) . 1) ((control) . nil)))
@@ -140,6 +140,9 @@ to beginning of line."
 (setq local-custom-file "~/.emacs-custom.el")
 (if (file-exists-p local-custom-file)
     (load local-custom-file))
+
+(add-hook 'haskell-mode-hook #'lsp)
+(add-hook 'haskell-literate-mode-hook #'lsp)
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

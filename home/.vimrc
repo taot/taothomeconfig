@@ -16,7 +16,7 @@ set laststatus=2
 " 显示光标位置
 set ruler
 " 显示行号
-"set number
+" set number
 " 高亮显示当前行/列
 "set cursorline
 "set cursorcolumn

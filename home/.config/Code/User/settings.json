@@ -36,5 +36,11 @@
     ],
     "todo-tree.regex.regex": "(//|#|<!--|;|/\\*|^|^\\s*(-|\\d+.))\\s*($TAGS)",
     "php.validate.executablePath": "/usr/bin/php7",
-    "editor.fontSize": 15
+    "editor.fontSize": 15,
+    "haskell.manageHLS": "GHCup",
+    "haskell.ghcupExecutablePath": "/home/taot/.ghcup/bin/ghcup",
+    "haskell.toolchain": {
+    
+    },
+    "cmake.configureOnOpen": true
 }

@@ -37,7 +37,7 @@ def link(src, dst, status):
         run1(["cp", dst, dst + ".bak"])
     retcode, stdout, stderr = run1(["ln", "-sf", src, dst])
     if retcode != 0:
-        raise Exception("failed to link")
+        raise Exception(f"failed to link {src} to {dst}")
     return
 
 

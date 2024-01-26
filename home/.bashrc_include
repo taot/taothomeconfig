@@ -17,6 +17,7 @@ setproxy() {
 alias diff='diff -u'
 alias dirs='dirs -v'
 alias emacs='emacs -nw'
+alias grep='grep --color=auto'
 alias jobs='jobs -l'
 alias la='ls -a'
 alias ll='ls -l'
@@ -68,9 +69,6 @@ export PAGER=/usr/bin/less
 
 export VISUAL=vim
 
-# 256 terminal
-# export TERM=xterm-256color
-
 # turn off the annoying beep. Comment out because xterm no longer supports it.
 #setterm --blength 0
 xset -b
@@ -80,3 +78,7 @@ GIT_COMPLETION_SCRIPT=/usr/share/git/completion/git-completion.bash
 if [ -f $GIT_COMPLETION_SCRIPT ]; then
     source $GIT_COMPLETION_SCRIPT
 fi
+
+# environment variables for ML
+export NLTK_DATA=~/data/pyml_data/nltk_data
+export GENSIM_DATA_DIR=~/data/pyml_data/gensim-data

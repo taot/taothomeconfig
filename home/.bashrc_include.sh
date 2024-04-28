@@ -81,10 +81,5 @@ if [ -f $GIT_COMPLETION_SCRIPT ]; then
     source $GIT_COMPLETION_SCRIPT
 fi
 
-# environment variables for ML
-export ML_DATA_AUTO_DOWNLOAD_HOME=~/data/ml_data/auto_download
-
-export GENSIM_DATA_DIR=${ML_DATA_AUTO_DOWNLOAD_HOME}/gensim
-export HF_HOME=${ML_DATA_AUTO_DOWNLOAD_HOME}/huggingface
-export NLTK_DATA=${ML_DATA_AUTO_DOWNLOAD_HOME}/nltk
-export OLLAMA_MODELS=${ML_DATA_AUTO_DOWNLOAD_HOME}/ollama
+# load shared environment variables (e.g. with KDE, etc)
+[[ -f ~/.bashrc_shared_env.sh ]] && source ~/.bashrc_shared_env.sh

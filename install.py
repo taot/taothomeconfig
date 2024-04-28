@@ -26,7 +26,7 @@ def run2(cmd, cwd=None):
     return proc.returncode, stderr
 
 def find(cwd):
-    retcode, stdout, stderr = run1(["find", "-type", "f"], cwd=cwd)
+    retcode, stdout, stderr = run1(["find", "-type", "f", "-or", "-type", "l"], cwd=cwd)
     if retcode != 0:
         raise Exception("failed to find config files")
     return stdout.decode().split()
@@ -89,7 +89,7 @@ def clear():
     os.system("clear")
     return
 
-if __name__ == "__main__":
+def main():
     config_files = [(f[2:], get_link_status(f)) for f in find(os.path.join(SCRIPT_DIR, "home"))]
     selected = dialog_checklist("Select config files to link", 20, 80, config_files)
     action_list = []
@@ -116,3 +116,6 @@ if __name__ == "__main__":
     clear()
     for src, dst, status in action_list:
         print(src + " -> " + dst)
+
+if __name__ == "__main__":
+    main()

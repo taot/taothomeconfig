@@ -22,6 +22,7 @@ alias jobs='jobs -l'
 alias la='ls -a'
 alias ll='ls -l'
 alias ls='ls --color=auto'
+alias psc='ps xawf -eo pid,user,cgroup,args'
 alias tig='tig --all'
 alias vi='vim'
 

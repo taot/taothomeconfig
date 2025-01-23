@@ -1,0 +1,67 @@
+#!/bin/bash
+
+set -e
+set +x
+
+if [ -z "$VAULT_NAME" ]; then
+    echo "Error: VAULT_NAME is not set"
+    exit 1
+fi
+
+if [ -z "$VAULT_MOUNT_POINT" ]; then
+    echo "Error: VAULT_MOUNT_POINT is not set"
+    exit 1
+fi
+
+if [ -z "$VAULT_IMAGE_PATH" ]; then
+    echo "Error: VAULT_IMAGE_PATH is not set"
+    exit 1
+fi
+
+
+# Display help message
+function usage() {
+    echo "Usage: $0 [option]"
+    echo "Options:"
+    echo "    open:    Open the vault"
+    echo "    close:   Close the vault"
+}
+
+function open_vault() {
+    echo "Opening vault $VAULT_NAME ($VAULT_IMAGE_PATH)"
+    sudo cryptsetup open --type luks $VAULT_IMAGE_PATH $VAULT_NAME
+    echo "Mounting $VAULT_NAME to $VAULT_MOUNT_POINT"
+    sudo mount /dev/mapper/$VAULT_NAME $VAULT_MOUNT_POINT
+}
+
+function close_vault() {
+    echo "Unmounting $VAULT_MOUNT_POINT"
+    sudo umount $VAULT_MOUNT_POINT
+    echo "Closing vault $VAULT_NAME"
+    sudo cryptsetup close $VAULT_NAME
+}
+
+
+# Check if an argument is provided
+if [ $# -eq 0 ]; then
+    echo "Error: No option provided"
+    usage
+    exit 1
+fi
+
+# Process the argument
+case "$1" in
+    "open")
+        open_vault
+        ;;
+    "close")
+        close_vault
+        ;;
+    *)
+        echo "Error: Invalid option '$1'"
+        usage
+        exit 1
+        ;;
+esac
+
+exit 0

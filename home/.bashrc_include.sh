@@ -1,17 +1,19 @@
-#
-# ~/.bashrc_include
-#
-# Add the following line into ~/.bashrc to load it
-#
-#   [[ -f ~/.bashrc_include ]] && source ~/.bashrc_include
-#
+####################################################################
+#                                                                  #
+# File: ~/.bashrc_include.sh                                       #
+#                                                                  #
+# Add the following line into ~/.bashrc to load it                 #
+#                                                                  #
+#   [[ -f ~/.bashrc_include.sh ]] && source ~/.bashrc_include.sh   #
+#                                                                  #
+####################################################################
 
-# functions
-setproxy() {
-    #export http_proxy="http://10.1.0.1:6543"
-    export http_proxy="http://127.0.0.1:8087"
-    echo "http_proxy=$http_proxy"
-}
+
+####################################################################
+#                                                                  #
+# Basic Bash Configurations                                        #
+#                                                                  #
+####################################################################
 
 # aliases
 alias diff='diff -u'
@@ -25,8 +27,6 @@ alias ls='ls --color=auto'
 alias psc='ps xawf -eo pid,user,cgroup,args'
 alias tig='tig --all'
 alias vi='vim'
-
-alias rusti='evcxr'
 
 # PS1
 parse_git_branch() {
@@ -51,6 +51,7 @@ find_git_branch () {
     git_branch=''
 }
 PROMPT_COMMAND="find_git_branch; $PROMPT_COMMAND"
+
 # Here is bash color codes you can use
   black=$'\[\e[1;30m\]'
     red=$'\[\e[1;31m\]'
@@ -84,3 +85,56 @@ fi
 
 # load shared environment variables (e.g. with KDE, etc)
 [[ -f ~/.bashrc_shared_env.sh ]] && source ~/.bashrc_shared_env.sh
+
+
+####################################################################
+#                                                                  #
+# Functions Definitions                                            #
+#                                                                  #
+####################################################################
+
+#
+# Enable/disable camera
+#
+camera() {
+    local action="$1"
+    
+    case "$action" in
+        enable)
+            echo "Loading module uvcvideo..."
+            sudo modprobe uvcvideo
+            ;;
+        disable)
+            echo "Unloading module uvcvideo..."
+            sudo modprobe -r uvcvideo
+            ;;
+        status)
+            echo "Listing module uvcvideo..."
+            local output=$(lsmod | grep ^uvcvideo)
+            if [[ -z "$output" ]]; then
+                echo "Module uvcvideo not found."
+                echo "Camera disabled."
+            else
+                echo "Found module:"
+                echo "$output"
+                echo "Camera enabled."
+            fi
+            ;;
+        *)
+            echo "Enable/disable camera by loading/unloading module uvcvideo"
+            echo "Usage: camera {enable|disable|status}"
+            return 1
+            ;;
+    esac
+}
+
+# Auto-completion function
+_camera_completion() {
+    local cur="${COMP_WORDS[COMP_CWORD]}"
+    local opts="enable disable status"
+    
+    COMPREPLY=($(compgen -W "$opts" -- "$cur"))
+}
+
+# Register camera completion function
+complete -F _camera_completion camera

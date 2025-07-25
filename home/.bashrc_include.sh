@@ -100,11 +100,11 @@ camera() {
     local action="$1"
     
     case "$action" in
-        enable)
+        on)
             echo "Loading module uvcvideo..."
             sudo modprobe uvcvideo
             ;;
-        disable)
+        off)
             echo "Unloading module uvcvideo..."
             sudo modprobe -r uvcvideo
             ;;
@@ -122,7 +122,7 @@ camera() {
             ;;
         *)
             echo "Enable/disable camera by loading/unloading module uvcvideo"
-            echo "Usage: camera {enable|disable|status}"
+            echo "Usage: camera {on|off|status}"
             return 1
             ;;
     esac
@@ -131,7 +131,7 @@ camera() {
 # Auto-completion function
 _camera_completion() {
     local cur="${COMP_WORDS[COMP_CWORD]}"
-    local opts="enable disable status"
+    local opts="on off status"
     
     COMPREPLY=($(compgen -W "$opts" -- "$cur"))
 }

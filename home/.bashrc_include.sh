@@ -83,8 +83,8 @@ if [ -f $GIT_COMPLETION_SCRIPT ]; then
     source $GIT_COMPLETION_SCRIPT
 fi
 
-# load shared environment variables (e.g. with KDE, etc)
-[[ -f ~/.bashrc_shared_env.sh ]] && source ~/.bashrc_shared_env.sh
+# load environment variables
+[[ -f ~/.env.sh ]] && source ~/.env.sh
 
 
 ####################################################################

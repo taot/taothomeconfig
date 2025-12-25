@@ -42,5 +42,6 @@
     "haskell.toolchain": {
     
     },
-    "cmake.configureOnOpen": true
+    "cmake.configureOnOpen": true,
+    "workbench.colorTheme": "Visual Studio Light"
 }

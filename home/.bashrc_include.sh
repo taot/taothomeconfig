@@ -85,6 +85,7 @@ fi
 
 # load environment variables
 [[ -f ~/.env.sh ]] && source ~/.env.sh
+[[ -f ~/.env.local.sh ]] && source ~/.env.local.sh
 
 
 ####################################################################

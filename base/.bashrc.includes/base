@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 # settings
 export HISTTIMEFORMAT="%Y/%d/%m %T "    # display time in bash history
 export PAGER=/usr/bin/less

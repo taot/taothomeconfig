@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 ####################################################################
 #                                                                  #
 # File: ~/.bashrc.init                                             #
@@ -10,7 +12,9 @@
 #                                                                  #
 ####################################################################
 
-for file in "$HOME"/.bash.includes/*; do
+[[ -f ~/.bashrc.env ]] && source ~/.bashrc.env
+
+for file in "$HOME"/.bashrc.includes/*; do
     source "$file"
 done
 

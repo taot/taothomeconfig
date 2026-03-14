@@ -1,1 +1,1 @@
-. "$HOME/.env.sh"
+. "$HOME/.bashrc.env"

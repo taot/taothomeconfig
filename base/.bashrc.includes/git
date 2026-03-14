@@ -1,0 +1,9 @@
+#
+# Settings for Git
+#
+
+# bash completion
+GIT_COMPLETION_SCRIPT=/usr/share/git/completion/git-completion.bash
+if [ -f $GIT_COMPLETION_SCRIPT ]; then
+    source $GIT_COMPLETION_SCRIPT
+fi

@@ -1,0 +1,17 @@
+####################################################################
+#                                                                  #
+# File: ~/.bashrc.init                                             #
+#                                                                  #
+# Usage:                                                           #
+#                                                                  #
+# Add the following line into ~/.bashrc to load it                 #
+#                                                                  #
+#   [[ -f ~/.bashrc.init ]] && source ~/.bashrc.init               #
+#                                                                  #
+####################################################################
+
+for file in "$HOME"/.bash.includes/*; do
+    source "$file"
+done
+
+[[ -f ~/.bashrc.local ]] && source ~/.bashrc.local

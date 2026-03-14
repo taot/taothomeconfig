@@ -1,0 +1,45 @@
+#
+# Enable/disable camera
+#
+camera() {
+    local action="$1"
+    
+    case "$action" in
+        on)
+            echo "Loading module uvcvideo..."
+            sudo modprobe uvcvideo
+            ;;
+        off)
+            echo "Unloading module uvcvideo..."
+            sudo modprobe -r uvcvideo
+            ;;
+        status)
+            echo "Listing module uvcvideo..."
+            local output=$(lsmod | grep ^uvcvideo)
+            if [[ -z "$output" ]]; then
+                echo "Module uvcvideo not found."
+                echo "Camera disabled."
+            else
+                echo "Found module:"
+                echo "$output"
+                echo "Camera enabled."
+            fi
+            ;;
+        *)
+            echo "Enable/disable camera by loading/unloading module uvcvideo"
+            echo "Usage: camera {on|off|status}"
+            return 1
+            ;;
+    esac
+}
+
+# Auto-completion function
+_camera_completion() {
+    local cur="${COMP_WORDS[COMP_CWORD]}"
+    local opts="on off status"
+    
+    COMPREPLY=($(compgen -W "$opts" -- "$cur"))
+}
+
+# Register camera completion function
+complete -F _camera_completion camera

@@ -8,6 +8,9 @@ export VISUAL=vim
 # turn off the annoying beep
 xset -b
 
+# remove bind for Ctrl-L for Cursor
+bind -r '\C-l'
+
 # aliases
 alias diff='diff -u'
 alias dirs='dirs -v'

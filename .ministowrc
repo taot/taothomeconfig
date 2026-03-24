@@ -1,0 +1,4 @@
+--target=$HOME
+--verbose=2
+--fold=base/.bashrc.includes
+--fold=wezterm/.config/wezterm
